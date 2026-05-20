@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rowan's Tornado HQ 🌪️</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sky: #0a1628;
+  --storm: #1a2a4a;
+  --cloud: #2a3f6f;
+  --lightning: #ffe066;
+  --danger: #ff6b35;
+  --safe: #4ecdc4;
+  --text: #e8f4f8;
+  --muted: rgba(232,244,248,0.6);
+  --card: rgba(255,255,255,0.06);
+  --card-border: rgba(255,255,255,0.12);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family:'Nunito',sans-serif;
+  background:var(--sky);
+  color:var(--text);
+  min-height:100vh;
+}
+
+h1,h2,h3 { font-family:'Boogaloo',cursive; }
+
+.page { max-width:750px; margin:0 auto; padding:0 16px 80px; }
+
+/* ── ANIMATED BACKGROUND ── */
+.sky-bg {
+  position:fixed; inset:0;
+  background:radial-gradient(ellipse at 20% 50%, #1a3a6a 0%, #0a1628 50%),
+              radial-gradient(ellipse at 80% 20%, #2a1a4a 0%, transparent 60%);
+  z-index:0;
+}
+.lightning-bg {
+  position:fixed; inset:0;
+  background:transparent; z-index:0;
+  animation:lightning-flash 8s infinite;
+}
+@keyframes lightning-flash {
+  0%,92%,100% { background:transparent; }
+  93% { background:rgba(255,224,102,0.04); }
+  94% { background:transparent; }
+  95% { background:rgba(255,224,102,0.07); }
+  96% { background:transparent; }
+}
+
+.rain { position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+.raindrop {
+  position:absolute; top:-20px; width:2px;
+  background:linear-gradient(transparent, rgba(100,180,255,0.35));
+  animation:fall linear infinite; border-radius:2px;
+}
+@keyframes fall { to { transform:translateY(110vh) translateX(-30px); } }
+
+.content { position:relative; z-index:10; }
+
+/* ── HERO ── */
+.hero {
+  text-align:center;
+  padding:36px 0 28px;
+  border-bottom:1px solid var(--card-border);
+  margin-bottom:32px;
+}
+.hero-icon {
+  font-size:60px; display:block; margin-bottom:10px;
+  animation:spin-slow 6s ease-in-out infinite;
+}
+@keyframes spin-slow {
+  0%,100% { transform:rotate(-5deg) scale(1); }
+  50% { transform:rotate(5deg) scale(1.06); }
+}
+.hero h1 {
+  font-size:clamp(2.2rem,7vw,3.2rem);
+  color:var(--lightning);
+  text-shadow:0 0 28px rgba(255,224,102,0.45);
+  line-height:1;
+}
+.hero .tagline {
+  margin-top:8px; font-size:1.05rem;
+  color:var(--muted); font-weight:600;
+}
+.kc-badge {
+  display:inline-block; margin-top:12px;
+  padding:5px 16px; border-radius:20px;
+  background:rgba(255,224,102,0.1);
+  border:1px solid rgba(255,224,102,0.3);
+  font-size:0.8rem; font-weight:700;
+  color:var(--lightning); letter-spacing:1px;
+}
+
+/* ── NAV TABS ── */
+.nav {
+  display:flex; gap:6px; flex-wrap:wrap; margin-bottom:30px;
+}
+.tab {
+  flex:1; min-width:80px;
+  padding:9px 6px;
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:12px;
+  color:var(--muted);
+  font-family:'Nunito',sans-serif;
+  font-weight:700; font-size:0.78rem;
+  cursor:pointer; text-align:center;
+  transition:all 0.2s;
+}
+.tab:hover { background:rgba(255,255,255,0.1); color:var(--text); }
+.tab.active {
+  background:rgba(255,224,102,0.15);
+  border-color:rgba(255,224,102,0.5);
+  color:var(--lightning);
+}
+.tab span { display:block; font-size:1.4rem; margin-bottom:3px; }
+
+/* ── SECTIONS ── */
+.section { display:none; animation:fadeIn 0.35s ease-out; }
+.section.active { display:block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.section-title {
+  font-size:1.8rem; color:var(--lightning);
+  margin-bottom:20px;
+  display:flex; align-items:center; gap:10px;
+}
+
+/* ── CARDS ── */
+.card {
+  background:var(--card);
+  border:1px solid var(--card-border);
+  border-radius:14px; padding:18px; margin-bottom:14px;
+}
+.card-title {
+  font-family:'Boogaloo',cursive;
+  font-size:1.18rem; color:var(--lightning);
+  margin-bottom:7px; display:flex; align-items:center; gap:8px;
+}
+.card p { font-size:0.93rem; color:var(--muted); line-height:1.68; }
+
+/* ── EF SCALE ── */
+.ef-grid { display:flex; flex-direction:column; gap:10px; }
+.ef-bar {
+  border-radius:12px; padding:15px 17px;
+  cursor:pointer; border:1px solid transparent;
+  transition:all 0.2s;
+}
+.ef-bar:hover { filter:brightness(1.12); }
+.ef-header { display:flex; align-items:center; justify-content:space-between; }
+.ef-label { font-family:'Boogaloo',cursive; font-size:1.2rem; font-weight:700; }
+.ef-wind { font-size:0.82rem; font-weight:700; opacity:0.85; }
+.ef-desc { font-size:0.86rem; margin-top:6px; opacity:0.85; line-height:1.5; }
+.ef-detail {
+  display:none; margin-top:10px; padding-top:10px;
+  border-top:1px solid rgba(255,255,255,0.15);
+  font-size:0.85rem; line-height:1.62;
+}
+.ef-bar.open .ef-detail { display:block; }
+.ef-bar .toggle-hint { font-size:0.72rem; opacity:0.5; margin-top:4px; }
+
+.ef0 { background:rgba(78,205,196,0.18); border-color:rgba(78,205,196,0.4); color:#4ecdc4; }
+.ef1 { background:rgba(100,180,255,0.18); border-color:rgba(100,180,255,0.4); color:#64b4ff; }
+.ef2 { background:rgba(255,224,102,0.18); border-color:rgba(255,224,102,0.4); color:#ffe066; }
+.ef3 { background:rgba(255,160,50,0.22); border-color:rgba(255,160,50,0.4); color:#ffa032; }
+.ef4 { background:rgba(255,100,60,0.22); border-color:rgba(255,100,60,0.4); color:#ff643c; }
+.ef5 { background:rgba(220,50,50,0.22); border-color:rgba(220,50,50,0.4); color:#dc3232; }
+
+/* ── HOW IT FORMS ── */
+.steps { display:flex; flex-direction:column; gap:0; position:relative; }
+.steps::before {
+  content:''; position:absolute; left:22px; top:0; bottom:0;
+  width:2px;
+  background:linear-gradient(to bottom, var(--safe), var(--lightning), var(--danger));
+  z-index:0;
+}
+.step {
+  display:flex; gap:16px; align-items:flex-start;
+  padding:16px 0; position:relative; z-index:1;
+}
+.step-num {
+  width:46px; height:46px; min-width:46px;
+  border-radius:50%; display:flex;
+  align-items:center; justify-content:center;
+  font-family:'Boogaloo',cursive; font-size:1.4rem;
+  background:var(--sky); border:2px solid var(--safe);
+}
+.step:nth-child(2) .step-num { border-color:#8ad4ff; }
+.step:nth-child(3) .step-num { border-color:#ffd066; }
+.step:nth-child(4) .step-num { border-color:#ffaa40; }
+.step:nth-child(5) .step-num { border-color:var(--danger); }
+.step-body h3 { font-family:'Boogaloo',cursive; font-size:1.05rem; color:var(--text); margin-bottom:5px; }
+.step-body p { font-size:0.9rem; color:var(--muted); line-height:1.62; }
+
+/* ── KANSAS CITY ── */
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.stat-box {
+  background:var(--card); border:1px solid var(--card-border);
+  border-radius:13px; padding:18px; text-align:center;
+}
+.stat-num { font-family:'Boogaloo',cursive; font-size:2.1rem; color:var(--lightning); line-height:1; }
+.stat-label { font-size:0.76rem; color:var(--muted); font-weight:700; margin-top:5px; text-transform:uppercase; letter-spacing:0.5px; }
+
+/* ── SAFETY ── */
+.watch-vs-warning { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.ww-box { border-radius:13px; padding:18px; text-align:center; }
+.ww-watch { background:rgba(255,160,50,0.15); border:1px solid rgba(255,160,50,0.4); }
+.ww-warning { background:rgba(220,50,50,0.2); border:1px solid rgba(220,50,50,0.5); }
+.ww-box .emoji { font-size:2.2rem; display:block; margin-bottom:7px; }
+.ww-box h3 { font-family:'Boogaloo',cursive; font-size:1.15rem; margin-bottom:7px; }
+.ww-watch h3 { color:#ffa032; }
+.ww-warning h3 { color:#ff5050; }
+.ww-box p { font-size:0.84rem; color:var(--muted); line-height:1.58; }
+
+.safety-do, .safety-dont { border-radius:13px; padding:17px; margin-bottom:13px; }
+.safety-do { background:rgba(78,205,196,0.1); border:1px solid rgba(78,205,196,0.3); }
+.safety-dont { background:rgba(255,107,53,0.1); border:1px solid rgba(255,107,53,0.3); }
+.safety-header { font-family:'Boogaloo',cursive; font-size:1.25rem; margin-bottom:12px; }
+.safety-do .safety-header { color:var(--safe); }
+.safety-dont .safety-header { color:var(--danger); }
+.safety-list { list-style:none; display:flex; flex-direction:column; gap:8px; }
+.safety-list li { font-size:0.9rem; color:var(--muted); display:flex; gap:9px; line-height:1.55; }
+.safety-list li::before { font-size:1rem; min-width:20px; }
+.safety-do .safety-list li::before { content:"✅"; }
+.safety-dont .safety-list li::before { content:"❌"; }
+
+/* ── WOW FACTS ── */
+.facts-grid { display:flex; flex-direction:column; gap:10px; }
+.fact-card {
+  background:var(--card); border:1px solid var(--card-border);
+  border-radius:13px; padding:15px 17px;
+  display:flex; gap:14px; align-items:flex-start;
+  cursor:pointer; transition:all 0.2s;
+}
+.fact-card:hover { background:rgba(255,255,255,0.09); border-color:rgba(255,224,102,0.25); }
+.fact-icon { font-size:1.9rem; min-width:38px; text-align:center; }
+.fact-text { flex:1; }
+.fact-title { font-family:'Boogaloo',cursive; font-size:1.02rem; color:var(--lightning); margin-bottom:4px; }
+.fact-body { font-size:0.88rem; color:var(--muted); line-height:1.6; }
+.fact-hint { font-size:0.75rem; color:rgba(255,224,102,0.4); margin-top:4px; font-style:italic; }
+.fact-secret {
+  display:none; margin-top:10px; padding:10px 12px;
+  background:rgba(255,224,102,0.08); border-radius:9px;
+  border-left:3px solid rgba(255,224,102,0.4);
+  font-size:0.85rem; color:rgba(255,224,102,0.9); line-height:1.6;
+}
+.fact-card.open .fact-secret { display:block; }
+.fact-card.open .fact-hint { display:none; }
+
+/* ── TYPES ── */
+.types-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.type-card {
+  background:var(--card); border:1px solid var(--card-border);
+  border-radius:13px; padding:17px;
+}
+.type-icon { font-size:2.1rem; margin-bottom:9px; display:block; }
+.type-name { font-family:'Boogaloo',cursive; font-size:1.12rem; color:var(--lightning); margin-bottom:6px; }
+.type-desc { font-size:0.84rem; color:var(--muted); line-height:1.58; }
+
+/* ── GLOSSARY ── */
+.glossary-item {
+  border-radius:11px; overflow:hidden;
+  border:1px solid var(--card-border); margin-bottom:7px;
+}
+.glossary-q {
+  padding:13px 17px; background:var(--card);
+  cursor:pointer; display:flex;
+  justify-content:space-between; align-items:center;
+  font-weight:700; font-size:0.94rem;
+}
+.glossary-q:hover { background:rgba(255,255,255,0.09); }
+.glossary-arrow { color:var(--muted); transition:transform 0.2s; font-size:0.8rem; }
+.glossary-item.open .glossary-arrow { transform:rotate(180deg); }
+.glossary-a {
+  display:none; padding:11px 17px 15px;
+  background:rgba(0,0,0,0.2);
+  font-size:0.88rem; color:var(--muted); line-height:1.67;
+}
+.glossary-item.open .glossary-a { display:block; }
+
+/* ── RECORDS ── */
+.records-list { display:flex; flex-direction:column; gap:11px; }
+.record-card {
+  background:var(--card); border:1px solid var(--card-border);
+  border-radius:13px; padding:15px 17px;
+  display:flex; gap:15px; align-items:center;
+}
+.record-medal { font-size:2.2rem; min-width:44px; text-align:center; }
+.record-info h3 { font-family:'Boogaloo',cursive; font-size:1.02rem; color:var(--lightning); margin-bottom:4px; }
+.record-info p { font-size:0.86rem; color:var(--muted); line-height:1.55; }
+
+@media (max-width:520px) {
+  .types-grid { grid-template-columns:1fr; }
+  .stat-grid { grid-template-columns:1fr 1fr; }
+  .watch-vs-warning { grid-template-columns:1fr; }
+  .tab { min-width:70px; font-size:0.72rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="sky-bg"></div>
+<div class="lightning-bg"></div>
+<div class="rain" id="rain"></div>
+
+<div class="content">
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <span class="hero-icon">🌪️</span>
+    <h1>Rowan's Tornado HQ</h1>
+    <p class="tagline">Your complete guide to the most powerful storms on Earth</p>
+    <span class="kc-badge">📍 Kansas City, MO — Tornado Country!</span>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <button class="tab active" onclick="showTab('what',this)"><span>🌪️</span>What Is It?</button>
+    <button class="tab" onclick="showTab('how',this)"><span>⚙️</span>How It Forms</button>
+    <button class="tab" onclick="showTab('ef',this)"><span>📊</span>EF Scale</button>
+    <button class="tab" onclick="showTab('kc',this)"><span>📍</span>Kansas City</button>
+    <button class="tab" onclick="showTab('safety',this)"><span>🏠</span>Stay Safe</button>
+    <button class="tab" onclick="showTab('wow',this)"><span>🤯</span>Wow Facts</button>
+    <button class="tab" onclick="showTab('types',this)"><span>🌊</span>Types</button>
+    <button class="tab" onclick="showTab('words',this)"><span>📖</span>Word Bank</button>
+    <button class="tab" onclick="showTab('records',this)"><span>🏆</span>Records</button>
+  </div>
+
+  <!-- WHAT IS IT -->
+  <div id="sec-what" class="section active">
+    <div class="section-title">🌪️ What Is a Tornado?</div>
+    <div class="card">
+      <div class="card-title">💨 The Big Idea</div>
+      <p>A tornado is a violently rotating column of air that touches both a storm cloud above and the ground below. Think of it like a giant spinning tube of air — and it's one of the most powerful things in all of nature!</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🌩️ Where Do They Come From?</div>
+      <p>Most tornadoes come from a special kind of thunderstorm called a <strong style="color:var(--lightning)">supercell</strong>. These aren't your average storms — they can be 10 miles tall and last for hours. Inside a supercell, air starts spinning horizontally like a rolling log. Then powerful updrafts tip it vertical... and boom — a tornado is born!</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📏 How Big Are They?</div>
+      <p>Most tornadoes are about 300–500 feet wide — roughly the size of a football field. But the biggest ones can be over <strong style="color:var(--lightning)">2 miles wide</strong>! Their paths on the ground can stretch for 50+ miles, leaving a trail of destruction.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">⏱️ How Long Do They Last?</div>
+      <p>Most tornadoes are actually pretty short — only 10 minutes or less. But some monster tornadoes have stayed on the ground for over an hour, traveling hundreds of miles. The longer they last, the more damage they can do.</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🌈 What Color Are They?</div>
+      <p>It depends on what they're picking up! A tornado can look <strong style="color:#cc5555">red</strong> if it's over red Oklahoma dirt, <strong style="color:rgba(180,200,255,0.9)">white or gray</strong> in rain, nearly <strong style="color:rgba(255,255,255,0.6)">invisible</strong> before it picks up debris, or even <strong style="color:#aabbff">blue or purple</strong> at night when lit by lightning!</p>
+    </div>
+  </div>
+
+  <!-- HOW IT FORMS -->
+  <div id="sec-how" class="section">
+    <div class="section-title">⚙️ How a Tornado Forms</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Warm, moist air meets cold, dry air</h3>
+          <p>In spring and summer, warm wet air from the Gulf of Mexico pushes north into the Great Plains, where it slams into cold dry air coming down from Canada. This clash is the starting fuel!</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Wind shear creates spinning air</h3>
+          <p><strong style="color:#8ad4ff">Wind shear</strong> means the wind changes speed or direction as you go higher up. This difference makes the air roll like an invisible log, spinning horizontally near the ground.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>A supercell thunderstorm grows</h3>
+          <p>The warm rising air (called an <strong style="color:#ffd066">updraft</strong>) is so powerful it tips that spinning horizontal tube of air upright. Now you have a giant rotating column inside a huge storm — this is called a <strong style="color:#ffd066">mesocyclone</strong>!</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <h3>A funnel cloud drops down</h3>
+          <p>The mesocyclone tightens and stretches downward from the cloud base. You can see a <strong style="color:#ffaa40">funnel cloud</strong> starting to form — like a cone of swirling air reaching toward the ground. It's not a tornado yet though!</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <h3>Touchdown! It becomes a tornado</h3>
+          <p>The moment the funnel cloud touches the ground (or debris swirls up to meet it), it officially becomes a <strong style="color:var(--danger)">tornado</strong>! Now it picks up everything in its path — dirt, trees, cars, even houses.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="card-title">🌀 Rowan's Fun Science Fact</div>
+      <p>A tornado spins <strong style="color:var(--lightning)">counterclockwise</strong> in the Northern Hemisphere (that's where we live!) and clockwise in the Southern Hemisphere — because of the Coriolis effect, which is caused by the Earth spinning! Mind = blown. 🤯</p>
+    </div>
+  </div>
+
+  <!-- EF SCALE -->
+  <div id="sec-ef" class="section">
+    <div class="section-title">📊 The Enhanced Fujita Scale</div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-title">📐 What Is the EF Scale?</div>
+      <p>Scientists rate tornadoes EF0 through EF5 based on the damage they cause. It's named after Dr. Ted Fujita, who studied tornadoes for decades — meteorologists call him <strong style="color:var(--lightning)">"Mr. Tornado"!</strong> Tap any category below to learn more.</p>
+    </div>
+    <div class="ef-grid">
+      <div class="ef-bar ef0" onclick="this.classList.toggle('open')">
+        <div class="ef-header"><span class="ef-label">EF0 — Weak</span><span class="ef-wind">65–85 mph</span></div>
+        <div class="ef-desc">Breaks branches, damages signs and gutters. Happens most often.</div>
+        <div class="toggle-hint">👆 Tap to learn more</div>
+        <div class="ef-detail">EF0 tornadoes are the most common — about 53% of all tornadoes! They snap tree branches, damage chimneys, and peel surface off roofs. They look scary but cause the least harm. Most EF0s last just a few minutes. 👍</div>
+      </div>
+      <div class="ef-bar ef1" onclick="this.classList.toggle('open')">
+        <div class="ef-header"><span class="ef-label">EF1 — Moderate</span><span class="ef-wind">86–110 mph</span></div>
+        <div class="ef-desc">Overturns cars, blows off roofs, snaps trees.</div>
+        <div class="toggle-hint">👆 Tap to learn more</div>
+        <div class="ef-detail">EF1 winds can flip over mobile homes, push moving cars off roads, and cause major roof damage to houses. Still extremely dangerous — this is when you absolutely need to be in your shelter! 🚗</div>
+      </div>
+      <div class="ef-bar ef2" onclick="this.classList.toggle('open')">
+        <div class="ef-header"><span class="ef-label">EF2 — Significant</span><span class="ef-wind">111–135 mph</span></div>
+        <div class="ef-desc">Tears roofs off houses, destroys mobile homes, uproots big trees.</div>
+        <div class="toggle-hint">👆 Tap to learn more</div>
+        <div class="ef-detail">At EF2, entire roofs are ripped off well-built homes. Large trees snap or get uprooted. Cars are lifted off the ground. These are truly dangerous tornadoes that cause serious destruction. 🌲</div>
+      </div>
+      <div class="ef-bar ef3" onclick="this.classList.toggle('open')">
+        <div class="ef-header"><span class="ef-label">EF3 — Severe</span><span class="ef-wind">136–165 mph</span></div>
+        <div class="ef-desc">Entire stories of houses demolished, trains overturned, trees debarked.</div>
+        <div class="toggle-hint">👆 Tap to learn more</div>
+        <div class="ef-detail">EF3 can rip entire floors off buildings. Trains and semi-trucks get tossed around. Trees get stripped of their bark completely. These monsters only make up about 3% of tornadoes — but they're catastrophic. 🚂</div>
+      </div>
+      <div class="ef-bar ef4" onclick="this.classList.toggle('open')">
+        <div class="ef-header"><span class="ef-label">EF4 — Devastating</span><span class="ef-wind">166–200 mph</span></div>
+        <div class="ef-desc">Well-built houses leveled, cars thrown great distances.</div>
+        <div class="toggle-hint">👆 Tap to learn more</div>
+        <div class="ef-detail">EF4 tornadoes level well-built homes down to the foundation. Cars become missiles flying through the air. These are incredibly rare — less than 1% of all tornadoes ever reach this rating. 🏠💨</div>
+      </div>
+      <div class="ef-bar ef5" onclick="this.classList.toggle('open')">
+        <div class="ef-header"><span class="ef-label">EF5 — Incredible</span><span class="ef-wind">200+ mph</span></div>
+        <div class="ef-desc">Total destruction. Strong homes swept off foundations. Nothing left.</div>
+        <div class="toggle-hint">👆 Tap to learn more</div>
+        <div class="ef-detail">The most violent tornado possible. EF5 winds (sometimes 300+ mph!) wipe concrete foundations completely clean. Even reinforced structures get demolished. Only about 0.1% of all tornadoes reach EF5. The 2011 Joplin, MO tornado was EF5 — and you live less than 3 hours away! 😱</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KANSAS CITY -->
+  <div id="sec-kc" class="section">
+    <div class="section-title">📍 Tornado Alley & Kansas City</div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="stat-num">~56</div><div class="stat-label">Tornadoes per year in Missouri</div></div>
+      <div class="stat-box"><div class="stat-num">#1</div><div class="stat-label">Country with the most tornadoes in the world</div></div>
+      <div class="stat-box"><div class="stat-num">1,200</div><div class="stat-label">Average US tornadoes per year</div></div>
+      <div class="stat-box"><div class="stat-num">Apr–Jun</div><div class="stat-label">Peak tornado season in Kansas City</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🗺️ Why Is Kansas City in the Bull's-Eye?</div>
+      <p>Kansas City sits right at the edge of <strong style="color:var(--lightning)">Tornado Alley</strong> — the stretch of flat land from Texas up through Oklahoma, Kansas, and Missouri where most US tornadoes happen. The Rocky Mountains block moisture from mixing too early, so warm Gulf air and cold Canadian air collide right over the Great Plains — your backyard!</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🏙️ Nearby Famous Tornadoes</div>
+      <p><strong style="color:#ff8060">Joplin, MO (2011)</strong> — About 160 miles southeast of KC. An EF5 destroyed one-third of the entire city. One of the costliest and deadliest tornadoes in US history.<br><br>
+      <strong style="color:#ff8060">Greensburg, KS (2007)</strong> — About 4 hours west of KC. An EF5 nearly wiped out this entire small town. But the town rebuilt and became one of the greenest cities in America!<br><br>
+      <strong style="color:#ff8060">KC Metro (2019)</strong> — A tornado touched down very close to KC, causing major damage in Linwood and Bonner Springs. This is why being prepared matters!</p>
+    </div>
+    <div class="card">
+      <div class="card-title">📡 Your Best Friend: Emergency Alerts</div>
+      <p>Kansas City has one of the best warning systems in the country! Outdoor <strong style="color:var(--lightning)">warning sirens</strong> go off when a tornado warning is issued. You can also get alerts on phones. The National Weather Service office in Pleasant Hill, MO watches the skies over KC 24 hours a day, 7 days a week!</p>
+    </div>
+    <div class="card">
+      <div class="card-title">🌩️ Why Spring Is the Dangerous Season</div>
+      <p>April through June is peak tornado season in KC because that's when Gulf moisture really starts pushing north and clashing hard with lingering cold air from Canada. The temperature difference is greatest in spring — and the bigger the clash, the more explosive the storms. Summer is calmer because everything just gets uniformly hot!</p>
+    </div>
+  </div>
+
+  <!-- SAFETY -->
+  <div id="sec-safety" class="section">
+    <div class="section-title">🏠 How to Stay Safe</div>
+    <div class="watch-vs-warning">
+      <div class="ww-box ww-watch">
+        <span class="emoji">👀</span>
+        <h3>WATCH</h3>
+        <p>Conditions are <em>right</em> for tornadoes to form. Stay aware, know where your shelter is, and keep an eye on the news. You don't need to shelter yet — but be ready!</p>
+      </div>
+      <div class="ww-box ww-warning">
+        <span class="emoji">🚨</span>
+        <h3>WARNING</h3>
+        <p>A tornado has been <em>spotted</em> or confirmed on radar. Take shelter <strong>IMMEDIATELY!</strong> Don't wait to see it. Every second counts. This is the real deal!</p>
+      </div>
+    </div>
+    <div class="safety-do">
+      <div class="safety-header">✅ DO These Things</div>
+      <ul class="safety-list">
+        <li>Go to the lowest floor of a sturdy building — a basement is best!</li>
+        <li>Get to an interior room with no windows (bathroom, closet, or hallway)</li>
+        <li>Cover your head and neck with your hands or a sturdy pillow</li>
+        <li>Get under a heavy table or crouch against an interior wall</li>
+        <li>Listen to weather alerts on a phone or battery-powered radio</li>
+        <li>If in a car and you can't reach shelter, lie flat in a ditch below road level</li>
+        <li>Practice your family's tornado plan — everyone should know what to do!</li>
+      </ul>
+    </div>
+    <div class="safety-dont">
+      <div class="safety-header">❌ NEVER Do These Things</div>
+      <ul class="safety-list">
+        <li>Open windows — this is a myth that wastes precious escape time</li>
+        <li>Hide under a highway overpass — the wind actually gets faster and more dangerous there!</li>
+        <li>Go outside to watch or film the tornado</li>
+        <li>Stay in a mobile home — they offer almost no protection even in weak tornadoes</li>
+        <li>Try to outrun a tornado in a car if you can reach a sturdy building instead</li>
+        <li>Hide in the southwest corner of a room — that's a myth! Interior rooms are what matters</li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title">🎒 Emergency Kit Checklist</div>
+      <p>Every Kansas City family should have a kit ready: <strong style="color:var(--lightning)">water</strong> (1 gallon per person per day), <strong style="color:var(--lightning)">non-perishable food</strong>, <strong style="color:var(--lightning)">flashlights + batteries</strong>, <strong style="color:var(--lightning)">first aid kit</strong>, <strong style="color:var(--lightning)">battery-powered or hand-crank radio</strong>, <strong style="color:var(--lightning)">whistle</strong> to signal for help, <strong style="color:var(--lightning)">important documents</strong> in a waterproof bag, and your <strong style="color:var(--lightning)">pet's supplies</strong> too!</p>
+    </div>
+  </div>
+
+  <!-- WOW FACTS -->
+  <div id="sec-wow" class="section">
+    <div class="section-title">🤯 Mind-Blowing Tornado Facts</div>
+    <p style="font-size:0.9rem;color:var(--muted);margin-bottom:18px;">Tap any fact to unlock the hidden bonus details! 👇</p>
+    <div class="facts-grid">
+      <div class="fact-card" onclick="this.classList.toggle('open')">
+        <div class="fact-icon">🐄</div>
+        <div class="fact-text">
+          <div class="fact-title">Tornadoes can carry cows — and people have survived</div>
+          <div class="fact-body">It sounds like a movie, but it's real history from the Kansas plains.</div>
+          <div class="fact-hint">👆 Tap for the full story</div>
+          <div class="fact-secret">In the early 1900s, farmers reported cows being picked up by tornadoes and set down alive! And in 2011, a baby was sucked out of her parents' arms during the Joplin tornado and found alive a mile away in a field. Tornadoes are terrifyingly powerful — but incredible survival stories do exist!</div>
+        </div>
+      </div>
+      <div class="fact-card" onclick="this.classList.toggle('open')">
+        <div class="fact-icon">🌊</div>
+        <div class="fact-text">
+          <div class="fact-title">Fish rain has actually happened — for real</div>
+          <div class="fact-body">Animals have literally rained down from the sky, and scientists have an explanation.</div>
+          <div class="fact-hint">👆 Tap for the full story</div>
+          <div class="fact-secret">Waterspouts (tornadoes over water) can suck up fish, frogs, and other small creatures, carry them miles, and then drop them as the tornado weakens. This has been documented many times around the world. Imagine walking outside and it's raining frogs! 🐸</div>
+        </div>
+      </div>
+      <div class="fact-card" onclick="this.classList.toggle('open')">
+        <div class="fact-icon">🎸</div>
+        <div class="fact-text">
+          <div class="fact-title">Tornadoes make sound — but not what you'd expect</div>
+          <div class="fact-body">Survivors describe the noise in very specific and surprising ways.</div>
+          <div class="fact-hint">👆 Tap for the full story</div>
+          <div class="fact-secret">Most survivors say tornadoes sound like a massive freight train or a jet engine roaring right overhead. Some describe a very loud, continuous rumble or hissing. The sound comes from flying debris and powerful winds. If you ever hear that roar and there's no train nearby — get to shelter immediately!</div>
+        </div>
+      </div>
+      <div class="fact-card" onclick="this.classList.toggle('open')">
+        <div class="fact-icon">🏈</div>
+        <div class="fact-text">
+          <div class="fact-title">A tornado once carried a school bus over 200 feet</div>
+          <div class="fact-body">This happened in Kansas — not far from where you live!</div>
+          <div class="fact-hint">👆 Tap for the full story</div>
+          <div class="fact-secret">During the 1966 Topeka, Kansas tornado (EF5), school buses, houses, and large buildings were destroyed. One bus was thrown over 200 feet. This storm caused the equivalent of billions of dollars in damage today — and you're just a couple hours from Topeka!</div>
+        </div>
+      </div>
+      <div class="fact-card" onclick="this.classList.toggle('open')">
+        <div class="fact-icon">🌍</div>
+        <div class="fact-text">
+          <div class="fact-title">The USA gets WAY more tornadoes than any other country</div>
+          <div class="fact-body">We're talking 4 times more than the entire rest of the world combined.</div>
+          <div class="fact-hint">👆 Tap for the full story</div>
+          <div class="fact-secret">The US averages about 1,200 tornadoes per year. The UK gets about 30. All of Europe combined gets maybe 300. Why? The flat Great Plains, the Rocky Mountains, and the Gulf of Mexico create a perfect tornado factory that exists nowhere else on Earth. Living in Kansas City means living in the world's #1 tornado zone!</div>
+        </div>
+      </div>
+      <div class="fact-card" onclick="this.classList.toggle('open')">
+        <div class="fact-icon">🌙</div>
+        <div class="fact-text">
+          <div class="fact-title">Night tornadoes are especially deadly — here's why</div>
+          <div class="fact-body">More people die from nighttime tornadoes proportionally than daytime ones.</div>
+          <div class="fact-hint">👆 Tap for the full story</div>
+          <div class="fact-secret">You can't see a tornado at night! You might hear it or see lightning flashing around it, but there's no visual warning. Also, people are often asleep. This is why a weather radio with a loud alarm is so important — it can wake you up in time. In Kansas City, nighttime spring storms are especially dangerous.</div>
+        </div>
+      </div>
+      <div class="fact-card" onclick="this.classList.toggle('open')">
+        <div class="fact-icon">🔥</div>
+        <div class="fact-text">
+          <div class="fact-title">Fire tornadoes are a real thing — and terrifying</div>
+          <div class="fact-body">When a wildfire meets the right wind conditions, it creates something out of a nightmare.</div>
+          <div class="fact-hint">👆 Tap for the full story</div>
+          <div class="fact-secret">Fire whirls (sometimes called firenados) form when intense heat from a wildfire creates rising air that starts spinning. In 2018, a fire whirl in California was so powerful it was officially classified as an EF3 tornado — with winds over 140 mph and a column of fire reaching into the sky. Absolutely wild. 🌪️🔥</div>
+        </div>
+      </div>
+      <div class="fact-card" onclick="this.classList.toggle('open')">
+        <div class="fact-icon">📺</div>
+        <div class="fact-text">
+          <div class="fact-title">Storm chasers drive toward tornadoes on purpose</div>
+          <div class="fact-body">Real scientists risk their lives to get close — and it saves countless others.</div>
+          <div class="fact-hint">👆 Tap for the full story</div>
+          <div class="fact-secret">Storm chasers like the legendary Tim Samaras drove specialized vehicles close to tornadoes to drop instruments inside them. The data collected has helped meteorologists give earlier warnings, saving thousands of lives. Tim was tragically killed by the El Reno tornado in 2013 — a reminder of how powerful and unpredictable these storms truly are.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TYPES -->
+  <div id="sec-types" class="section">
+    <div class="section-title">🌊 Types of Tornadoes</div>
+    <div class="types-grid">
+      <div class="type-card">
+        <span class="type-icon">🌪️</span>
+        <div class="type-name">Supercell Tornado</div>
+        <div class="type-desc">The most powerful and dangerous kind. Forms inside a supercell thunderstorm with a mesocyclone. Responsible for almost all EF3–EF5 tornadoes. The classic "wedge" tornado is a type of supercell tornado.</div>
+      </div>
+      <div class="type-card">
+        <span class="type-icon">🌊</span>
+        <div class="type-name">Waterspout</div>
+        <div class="type-desc">A tornado over water! Can be fair-weather (weaker) or tornadic (just as dangerous as a land tornado). Common over Florida and the Great Lakes. Can suck up fish and frogs!</div>
+      </div>
+      <div class="type-card">
+        <span class="type-icon">🏜️</span>
+        <div class="type-name">Landspout</div>
+        <div class="type-desc">Forms differently than supercell tornadoes — from the ground up! Usually weaker, but still dangerous. Common in Colorado and Kansas. Looks like a thin, ropy funnel cloud.</div>
+      </div>
+      <div class="type-card">
+        <span class="type-icon">🔥</span>
+        <div class="type-name">Fire Whirl</div>
+        <div class="type-desc">A tornado made of FIRE! Forms during large wildfires when rising heat mixes with turbulent winds. In 2018, one in California was officially rated EF3. Incredibly dangerous.</div>
+      </div>
+      <div class="type-card">
+        <span class="type-icon">🌀</span>
+        <div class="type-name">Multiple Vortex</div>
+        <div class="type-desc">A single tornado with 2 or more smaller spinning vortices orbiting inside it! The sub-vortices cause wild, patchy damage — here one house stands, the next is completely leveled.</div>
+      </div>
+      <div class="type-card">
+        <span class="type-icon">☀️</span>
+        <div class="type-name">Dust Devil</div>
+        <div class="type-desc">NOT a tornado — but looks like one! Forms on hot sunny days with no thunderstorm. Usually harmless swirls of dust, rarely more than 50 mph. Fun to watch from a safe distance!</div>
+      </div>
+      <div class="type-card">
+        <span class="type-icon">⛈️</span>
+        <div class="type-name">Gustnado</div>
+        <div class="type-desc">A short-lived spinning column that forms along the gust front of a thunderstorm — not actually connected to the clouds above. Usually weak, but looks scary and can cause damage!</div>
+      </div>
+      <div class="type-card">
+        <span class="type-icon">❄️</span>
+        <div class="type-name">Snow Devil</div>
+        <div class="type-desc">Like a dust devil but made of snow! A rare spinning column of snow that forms in cold weather. Usually very weak but looks totally wild and magical. Super rare to see! ❄️🌀</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORD BANK -->
+  <div id="sec-words" class="section">
+    <div class="section-title">📖 Tornado Word Bank</div>
+    <p style="font-size:0.9rem;color:var(--muted);margin-bottom:18px;">The words real meteorologists use — tap any to expand the definition! 🔬</p>
+    <div class="glossary-list">
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Mesocyclone <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">The rotating updraft inside a supercell thunderstorm. It's the spinning "engine" that can produce a tornado. When a mesocyclone stretches downward and touches the ground, it becomes a tornado! Meteorologists spot mesocyclones on Doppler radar — that's how they can warn people before a tornado even forms.</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Supercell <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">The most dangerous type of thunderstorm, and the one responsible for the strongest tornadoes. Supercells are characterized by a persistent rotating updraft called a mesocyclone. They can be 40,000 feet tall — about 8 miles high! They often last for several hours.</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Doppler Radar <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">The technology meteorologists use to detect tornadoes before they form! Doppler radar can see not just where rain is, but how fast rain is moving toward or away from the radar. When the radar shows winds moving two different directions in the same spot, that's a sign of rotation — a possible tornado forming!</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Funnel Cloud <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">A rotating column of air extending from a thunderstorm's base — but one that hasn't touched the ground yet. Once it touches the ground (or debris swirls up to meet it), it officially becomes a tornado. A funnel cloud is made visible by water droplets condensing in the low-pressure air — not just dirt!</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Wind Shear <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">When the wind changes speed or direction as you go higher in altitude. For example: wind at ground level blows from the south at 15 mph, but wind at 15,000 feet blows from the southwest at 70 mph — that's wind shear! This causes air to roll horizontally, which thunderstorms can tip upright into a spinning column.</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Wall Cloud <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">A localized lowering of the base of a supercell thunderstorm, usually 1–5 miles wide. When storm chasers see a wall cloud, they know a tornado might be coming! It forms because air rushing into the storm's updraft is saturated with moisture. It often rotates and looks dark and ominous.</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Tornado Alley <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">An informal term for the region of the US that sees the most tornadoes — roughly covering Texas, Oklahoma, Kansas, Nebraska, and South Dakota. Kansas City sits right on the eastern edge! Some scientists now talk about an "expanding" Tornado Alley that includes more of the Southeast too.</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Debris Cloud <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">The swirling mass of dirt, trees, building materials, and other objects that surround the base of a strong tornado. Modern Doppler radar can actually detect debris clouds — a spinning cloud of debris on radar is one of the strongest confirmations that a tornado is on the ground, even at night when you can't see it!</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Coriolis Effect <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">The force caused by Earth's rotation that makes large-scale winds curve. In the Northern Hemisphere, it makes rotating storms spin counterclockwise — that's why tornadoes in Kansas City spin counterclockwise! In Australia and other Southern Hemisphere locations, tornadoes spin the other way. (It does NOT affect your bathtub draining though — that's a myth!)</div>
+      </div>
+      <div class="glossary-item" onclick="this.classList.toggle('open')">
+        <div class="glossary-q">Updraft <span class="glossary-arrow">▼</span></div>
+        <div class="glossary-a">A powerful column of warm air rising rapidly upward inside a thunderstorm. Updrafts are the engine of severe storms — they can move at over 100 mph upward! The updraft is what keeps hail suspended in storm clouds (making it grow larger and larger) and what helps tilt spinning air upright to form a mesocyclone.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECORDS -->
+  <div id="sec-records" class="section">
+    <div class="section-title">🏆 World Record Tornadoes</div>
+    <div class="records-list">
+      <div class="record-card">
+        <div class="record-medal">📏</div>
+        <div class="record-info">
+          <h3>Widest Ever — El Reno, Oklahoma (2013)</h3>
+          <p>2.6 miles wide! That's wider than many entire cities. Rated only EF3 despite its enormous size — and it had the fastest winds ever recorded inside a tornado: <strong style="color:var(--lightning)">302 mph</strong> measured by mobile Doppler radar. Tragically, storm chaser Tim Samaras was killed by this tornado.</p>
+        </div>
+      </div>
+      <div class="record-card">
+        <div class="record-medal">💀</div>
+        <div class="record-info">
+          <h3>Deadliest US Tornado — Tri-State Tornado (1925)</h3>
+          <p>Traveled <strong style="color:var(--lightning)">219 miles</strong> through Missouri, Illinois, and Indiana — the longest path ever recorded. Killed 695 people and injured 2,000 more. It moved so fast (73 mph!) that many people had no warning at all. Rated F5 on the old scale.</p>
+        </div>
+      </div>
+      <div class="record-card">
+        <div class="record-medal">🌍</div>
+        <div class="record-info">
+          <h3>Deadliest World Tornado — Bangladesh (1989)</h3>
+          <p>Killed approximately <strong style="color:var(--lightning)">1,300 people</strong> and left 80,000 homeless. Bangladesh has very deadly tornadoes because of no radar warning system, a dense population, and many people living in fragile structures. The US's warning system saves thousands of lives every year.</p>
+        </div>
+      </div>
+      <div class="record-card">
+        <div class="record-medal">💸</div>
+        <div class="record-info">
+          <h3>Most Expensive — Joplin, MO Tornado (2011)</h3>
+          <p><strong style="color:var(--lightning)">$2.8 billion</strong> in damage and 158 people killed. Just 160 miles from Kansas City. An EF5 about a mile wide that stayed on the ground for 22 miles through the city. The costliest single tornado in US history. Rowan, this one is practically in your backyard!</p>
+        </div>
+      </div>
+      <div class="record-card">
+        <div class="record-medal">🌀</div>
+        <div class="record-info">
+          <h3>Biggest Outbreak Ever — Super Outbreak (April 2011)</h3>
+          <p><strong style="color:var(--lightning)">362 tornadoes</strong> in 3 days across the southeastern US — including 218 in a single day on April 27. Killed 324 people and caused $11 billion in damage. Meteorologists still study it today as one of the most extreme weather events in recorded history.</p>
+        </div>
+      </div>
+      <div class="record-card">
+        <div class="record-medal">⚡</div>
+        <div class="record-info">
+          <h3>Fastest Winds — Bridge Creek–Moore Tornado (1999)</h3>
+          <p>An F5 near Moore, Oklahoma recorded surface winds of <strong style="color:var(--lightning)">318 mph</strong> — the highest surface wind speed ever measured on Earth at the time! Moore, Oklahoma has been hit by major tornadoes in 1999, 2003, and 2013 — earning it the nickname "Tornado City."</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script>
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function createRain() {
+  const rain = document.getElementById('rain');
+  for (let i = 0; i < 55; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'raindrop';
+    drop.style.left = Math.random() * 100 + 'vw';
+    drop.style.height = (Math.random() * 18 + 10) + 'px';
+    drop.style.animationDuration = (Math.random() * 0.8 + 0.5) + 's';
+    drop.style.animationDelay = (Math.random() * 2) + 's';
+    drop.style.opacity = Math.random() * 0.35 + 0.08;
+    rain.appendChild(drop);
+  }
+}
+createRain();
+</script>
+</body>
+</html>
