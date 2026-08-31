@@ -1,3 +1,4 @@
+<img width="4440" height="2520" alt="tornado_hq_poster" src="https://github.com/user-attachments/assets/cc453371-5e1f-477b-88eb-730baf7c4091" />
 # 🌪️ Rowan's Tornado HQ
 
 > **An interactive, educational tornado reference page built for a 9-year-old storm enthusiast in Kansas City, Missouri.**
